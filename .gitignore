@@ -2,5 +2,8 @@
 .Rhistory
 .RData
 .Ruserdata
-
 .csv
+coordinates.csv
+sulfate.csv
+sulfate_w_dates.csv
+sulfate_w_lakeinfo.csv
