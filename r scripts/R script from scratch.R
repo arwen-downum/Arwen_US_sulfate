@@ -7,10 +7,10 @@
 
 
 ###############                          ################
-################   Uplaoding data into R ################
+################   Uploading data into R ################
 ################                          #################
 
-# Load the readr package (useful for reading CSVs later if needed)
+# Load the readr package (useful for reading CSV later if needed)
 library(readr)
 
 # Install data.table package (run once, needed for fread/fwrite)
@@ -155,13 +155,25 @@ View(depth_1.5m_2017)
 avg_sufate <- depth_1.5m%>%
   group_by(sample_date,sample_id)%>%
   summarise(mean_sulfate = mean(parameter_value, na.rm = TRUE))
-head(avg_sufate)
+head(avg_sulfate)
 
-avg_sulfate_2017<- depth_1.5m_2017%>%
-  group_by(sample_date,sample_id)%>%
-  summarise(mean_sulfate = mean(parameter_value, na.rm = TRUE))
+#avg_sulfate_2017<- depth_1.5m_2017%>%
+  #group_by(sample_date,sample_id)%>%
+  #summarise(mean_sulfate = mean(parameter_value, na.rm = TRUE))
+
+colnames(depth_1.5m_2017)
+
+avg_sulfate_2017 <- depth_1.5m_2017 %>%
+  group_by(sample_date, sample_id) %>%
+  summarise(
+    mean_sulfate = mean(parameter_value, na.rm = TRUE),
+    cluster_lat_dd = first(cluster_lat_dd.x),
+    cluster_lon_dd = first(cluster_lon_dd.x)
+  )
 
 head(avg_sulfate_2017)
+
+View(avg_sulfate_2017)
 
 #### my output was weird , so I am exanming date data 
 
@@ -174,6 +186,12 @@ combined_data %>%
   )
 
 system("git --version")
+
+
+###################Saving data into CVS to transport into arc GIs###################
+
+write.csv(avg_sulfate_2017, "avg_sulfate_2017.csv", row.names = FALSE)
+getwd()
 
 
 
