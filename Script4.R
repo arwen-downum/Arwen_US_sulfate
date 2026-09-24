@@ -48,8 +48,37 @@ ggplot(yearly_avg, aes(x=year_only, y= so4_mgl)) +
 
 
 
+library(readxl)
+sulfate_topten <- read_excel("sulfate_topten.xlsx")
+View(sulfate_topten)
+
+names(sulfate_topten)
+
+summary(sulfate_topten$so4_mgl)
+head(sulfate_topten[, c("source_id", "source_sample_siteid", "so4_mgl")])
+
+sulfate_topten %>%
+  count(source_id, sort = TRUE)
+sulfate_topten %>%
+  group_by(source_id) %>%
+  summarise(
+    n = sum(!is.na(so4_mgl)),
+    median_so4 = median(so4_mgl, na.rm = TRUE),
+    min_so4 = min(so4_mgl, na.rm = TRUE),
+    max_so4 = max(so4_mgl, na.rm = TRUE)
+  ) %>%
+  arrange(desc(n))
+
+install.packages("data.table")  # only needed once
+library(data.table)
 
 
+chemistry_limno <- fread(file.choose())
 
 
+View(chemistry_limno)
 
+names(chemistry_limno)
+ls()
+
+names(sulfate)
