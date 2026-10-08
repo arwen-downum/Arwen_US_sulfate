@@ -242,11 +242,71 @@ getwd()
 
 # average sulfate
 
-fwrite()
+library(readxl)
+sulfate_topten <- read_excel("sulfate_topten.xlsx")
+View(sulfate_topten)
+
+
+
 
 library(dplyr)
-Sulfate_year_average <- top_10_sulfate%>%
-  group_by(year)%>%
+
+sulfate_year <- sulfate_topten %>%
+  mutate(year = format(as.Date(sample_date), "%Y")) %>%
+  group_by(year) %>%
   summarize(
-    mean_sulfate = mean(sulfa)
+    mean_sulfate = mean(so4_mgl, na.rm = TRUE),
+    sd_sulfate = sd(so4_mgl, na.rm = TRUE),
+    n = n()
   )
+
+head(sulfate_year)
+
+View(sulfate_year)
+
+
+
+install.packages("data.table")
+library(data.table)
+
+watersheds_data<- fread(file.choose())
+
+View(watersheds_data)
+names(watersheds_data)
+lake_watersheds_clean <-watersheds_data[,c("lagoslakeid",
+  "ws_zoneid",
+  "ws_subtype",
+  "ws_equalsnws",
+  "ws_states",
+  "ws_focallakewaterarea_ha",
+  "ws_area_ha",
+  "ws_lake_arearatio",
+  "ws_lat_decdeg",
+  "ws_lon_decdeg"
+)]
+View(lake_watersheds_clean)
+
+
+#Upload topten depths data 
+
+zip_file <- file.choose()
+
+unzip(zip_file, list = TRUE)
+
+library(readxl)
+
+Sulfate_topten <- read_excel(file.choose())
+View(Sulfate_topten)
+
+
+#joining sulfate top ten percent of depths with watershed data
+install.packages(dpylr)
+library(dpylr)
+
+sulfate_watershed<- Sulfate_topten%>%
+  left_join(lake_watersheds_clean,
+            by="lagoslakeid")
+View(sulfate_watershed)
+
+
+
