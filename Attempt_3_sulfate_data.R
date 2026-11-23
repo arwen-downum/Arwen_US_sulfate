@@ -1,35 +1,53 @@
+############################################################
+# LAGOS-US: Environmental Drivers of Sulfate Concentrations
+# Author: 
+# Last Updated:
+############################################################
 
-####################### Cleaning Sulfate data in R#####################
-
-
-###############Uploading Necessary Libraries###################
-
-
+#### 1. Project Setup ----
+# install Libraries and load packages
 install.packages("data.table")
 library(data.table)
+install.packages("tidydr")
+library(tidyr)
+library(dplyr)
+
+
+# Uploading and creating data set from LAGOS US data
+
+# all data can be found in https://lagoslakes.org/lagos-research-platforms/lagos-us/
+
+
+# uploading US LAGOS LIMNO data
 
 chemistry_limno<- fread(file.choose())
 
 View(chemistry_limno)
 
-chemistry_limno$parameter_name
+# find the parameter id that corresponds with parameter sulfate
 
-#########filter for sulfate only#########
+names(chemistry_limno)
+
+chemistry_limno %>%
+  distinct(parameter_id, parameter_name) %>%
+  arrange(parameter_id)
+
+
+chemistry_limno %>%
+  filter(grepl("so4_mgl", parameter_name, ignore.case = TRUE)) %>%
+  distinct(parameter_id, parameter_name)
+
+#filter for sulfate only parameter
 
 sulfate_data<- chemistry_limno[parameter_id==34]
 View(sulfate_data)
 
-
-install.packages("tidydr")
-library(tidyr)
-
+# pivot from long to wide format
 Sulfate_wide <- pivot_wider(sulfate_data,
                             names_from = parameter_name,
                             values_from = parameter_value)
 View(Sulfate_wide)
 
-install.packages(dpylr)
-library(dplyr)
 
 depth<-Sulfate_wide %>%
   count(sample_depth_m)
